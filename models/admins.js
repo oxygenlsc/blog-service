@@ -1,4 +1,3 @@
-//学校里面的管理员模型创建
 const sequelize = require('./db');
 const { DataTypes} = require('sequelize')
 //主键不用自己定义它会帮我们搞定 返回一个模型对象
