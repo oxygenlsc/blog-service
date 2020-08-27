@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx nodemon npm run dev",
+    "dev": "node routes/init.js"
   },
   "repository": {
     "type": "git",
@@ -18,8 +20,10 @@
   "homepage": "https://github.com/oxygenlsc/blog-service#readme",
   "dependencies": {
     "express": "^4.17.1",
+    "log4js": "^6.3.0",
     "md5": "^2.3.0",
     "mysql2": "^2.1.0",
+    "nodemon": "^2.0.4",
     "sequelize": "^6.3.4"
   }
 }

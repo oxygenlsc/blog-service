@@ -1,5 +1,6 @@
 const Adimn = require('../models/admins')
-const md5 = require('md5')
+const md5 = require('md5');
+const {sqlLog} = require('../log/index')
 exports.addAdimn = async function (adminObj) {
 
     // 1 因该判断数据库里面管理员是不是存在，前面进行业务判断 oprID谁再操作这个方法
@@ -34,12 +35,16 @@ exports.addAdimn = async function (adminObj) {
         LoginId: adminObj.LoginId,
         loginPwd: md5(adminObj.loginPwd)
     }
-    const ins = await Adimn.create(insertData)
-    //   Adimn.bulkCreate() 传入数组插入多条数据
-    return {
-        success: true,
-        data: ins.toJSON(),
-        msg: '添加成功'
+    try {
+        const ins = await Adimn.create(insertData)
+        sqlLog.info('创建管理员成功')
+        return {
+            success: true,
+            data: ins.toJSON(),
+            msg: '添加成功'
+        }
+    } catch (error) {
+        sqlLog.error(error)
     }
 }
 exports.deletAdimn = async function (adminid, nowAdmin) {
@@ -63,12 +68,17 @@ exports.deletAdimn = async function (adminid, nowAdmin) {
             msg: '没有传入当前管理员'
         }
     }
-    Adimn.destroy({
-        where: {
-            id: adminid
-        }
-    })
-
+    try {
+        Adimn.destroy({
+            where: {
+                id: adminid
+            }
+        })
+        sqlLog.info('成功删除了管理员：id是'+adminid)
+    } catch (error) {
+        sqlLog.error(error)
+    }
+   
 }
 //修改
 exports.updateAdimn = async function (id, adminObj, nowAdmin) {
@@ -92,15 +102,22 @@ exports.updateAdimn = async function (id, adminObj, nowAdmin) {
             msg: '没有管理员权限'
         }
     }
-    adminObj.loginPwd = md5(adminObj.loginPwd)
-    const ins = await  Adimn.update(adminObj, {
-        where: {
-            LoginId: id
+
+    try {
+        adminObj.loginPwd = md5(adminObj.loginPwd)
+        const ins = await  Adimn.update(adminObj, {
+            where: {
+                LoginId: id
+            }
+        })
+        sqlLog.info('修改id为'+id+'的用户成功')
+        return {
+            success:true,
+            msg:'修改成功',
+            data:ins
         }
-    })
-    return {
-        success:true,
-        msg:'修改成功',
-        data:ins
+    } catch (error) {
+        
     }
+   
 }
