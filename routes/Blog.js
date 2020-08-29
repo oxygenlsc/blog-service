@@ -6,7 +6,7 @@ router.post('/addblog', async (req,res)=>{
     const backdata = await BlogS.addBlog(JSON.parse(BlogData) );
     res.send(backdata);
 })
-router.post('/selectBlogByPage',async (req,resp)=>{
+router.get('/selectBlogByPage',async (req,resp)=>{
     const page = +req.query.page;
     const limit = +req.query.limit
     const data =  await BlogS.selectByPage(page,limit)
