@@ -12,7 +12,7 @@ router.post('/selectBlogByPage',async (req,resp)=>{
     const data =  await BlogS.selectByPage(page,limit)
     resp.send(data)
 })
-//根据条件查询博客一个是id差细节，一个是tags查列表
+//根据条件查询博客一个是id查细节，一个是tags查列表  
 router.get('/selectBlogByType',async (req,resp)=>{
         const Bid = req.query.id;
         const type = req.query.type;
@@ -36,10 +36,12 @@ router.get('/selectBlogByType',async (req,resp)=>{
              resp.send('type错误')
          } 
 })
+//跟新一个博客
 router.post('/updateblog',async (req,res)=>{
     const id = req.query.id;
+    const content = req.query.content
     const data = await BlogS.updateBlog(id,{
-        Bcontent:'修改3'
+        Bcontent:content
     })
     res.send(data)
 })

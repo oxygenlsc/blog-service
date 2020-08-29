@@ -3,32 +3,37 @@ const Adimn = require('../models/admins');
 const Tags = require('./tagsService')
 const TagsModel = require('../models/tags')
 const BtMaping = require('./blogtagmaping')
+const BtModel = require('../models/blog-tag-mapping');
+const  Seqeuelize = require('sequelize')
+const Op = Seqeuelize.Op;
 const md5 = require('md5');
 exports.addBlog = async (blogObj)=>{
     try {
         const ins = await Blog.create(blogObj)
         const Bid = ins.toJSON().id;
-        const findData =  await TagsModel.findOne({
-            where:{
-                Tag:blogObj.Btags
+        const tagsarr = blogObj.Btags.replace('，',',').split(',');
+        tagsarr.forEach(async el => {
+            let tid;
+            let tins;
+            const findData =  await TagsModel.findOne({
+                where:{
+                    Tag:el
+                }
+            })
+            if(!findData){
+                tins = await Tags.addTags(blogObj.Btags).data
+                tid = tins.id;
+            }else{
+                tins = findData.toJSON()
+                tid = findData.toJSON().id
             }
-        })
-        let tid;
-        let tins;
-        if(!findData){
-            tins = await Tags.addTags(blogObj.Btags).data
-            tid = tins.id;
-        }else{
-            tins = findData.toJSON()
-            tid = findData.toJSON().id
-        }
-        const mapdata = await BtMaping.addBtMap(Bid,tid)
+            const mapdata = await BtMaping.addBtMap(Bid,tid)
+        });
+      
         return {
             success: true,
             data: {
               blog:ins.toJSON(),
-              tag:tins,
-              mapdata:mapdata.data
             },
             msg: '添加成功'
         }
@@ -42,6 +47,8 @@ exports.addBlog = async (blogObj)=>{
     }
     
 }
+
+
 exports.updateBlog = async (blogId,newBlogObj)=>{
     try {
         const ins = await  Blog.update(newBlogObj, {
@@ -118,12 +125,29 @@ exports.selectByPage = async (page=1,limit=10)=>{
 exports.selectBlogByType = async (data)=>{
     try {
         if(data.type == 'tag'){
+            const tag = data.tag
+            const tagdata = await TagsModel.findOne({
+                where:{
+                    Tag:tag
+                },
+                attributes:['id']
+            })
+            console.log(tagdata.dataValues.id);
+            const tagID = tagdata.dataValues.id
+           
+            const bid = await BtModel.findAll({
+                where:{
+                    tid:tagID
+                },
+                attributes:['bid']
+            }) 
+            const bidarr = JSON.parse(JSON.stringify(bid)).map(el=>el.bid)
             const result = await Blog.findAndCountAll({
                 attributes:['id','Bauthor','Btitle','Bdesc','Btags','Bview','Blike','updatedAt'],//筛选查询指定列
                 offset:(data.page-1)*data.limit,
                 limit:+data.limit,
                 where:{
-                    Btags:data.tag
+                    id:{[Op.in]: bidarr}
                 }
             })
                 return {
