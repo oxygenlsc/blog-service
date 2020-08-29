@@ -11,13 +11,14 @@ exports.addTags = async (tag)=>{
                data:ins.toJSON()
            }
         } catch (error) {
-            const msgarr = error.errors.map(el=>({emsg:el.message,etype:el.type}))
+            // const msgarr = error.errors.map(el=>({emsg:el.message,etype:el.type}))
             return {
                 success:false,
-                error:msgarr,
+                error:error,
                 msg:"添加失败"
             }
         }
+        
 }
 
 exports.deletTags = async (tagid)=>{

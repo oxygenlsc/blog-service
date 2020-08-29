@@ -1,35 +1,67 @@
 const Blog = require('../models/blog');
 const Adimn = require('../models/admins');
+const Tags = require('./tagsService')
+const TagsModel = require('../models/tags')
+const BtMaping = require('./blogtagmaping')
 const md5 = require('md5');
 exports.addBlog = async (blogObj)=>{
     try {
         const ins = await Blog.create(blogObj)
+        const Bid = ins.toJSON().id;
+        const findData =  await TagsModel.findOne({
+            where:{
+                Tag:blogObj.Btags
+            }
+        })
+        let tid;
+        let tins;
+        if(!findData){
+            tins = await Tags.addTags(blogObj.Btags).data
+            tid = tins.id;
+        }else{
+            tins = findData.toJSON()
+            tid = findData.toJSON().id
+        }
+        const mapdata = await BtMaping.addBtMap(Bid,tid)
         return {
             success: true,
-            data: ins.toJSON(),
+            data: {
+              blog:ins.toJSON(),
+              tag:tins,
+              mapdata:mapdata.data
+            },
             msg: '添加成功'
         }
     } catch (error) {
-        const msgarr = error.errors.map(el=>({emsg:el.message,etype:el.type}))
+        // const msgarr = error.errors.map(el=>({emsg:el.message,etype:el.type}))
         return {
             success:false,
-            error:msgarr,
+            error:error,
             msg:"添加失败"
         }
     }
     
 }
 exports.updateBlog = async (blogId,newBlogObj)=>{
-    const ins = await  Blog.update(newBlogObj, {
-        where: {
-            id: blogId
+    try {
+        const ins = await  Blog.update(newBlogObj, {
+            where: {
+                id: blogId
+            }
+        })
+        return {
+            success:true,
+            msg:'修改成功',
+            data:ins
         }
-    })
-    return {
-        success:true,
-        msg:'修改成功',
-        data:ins
+    } catch (error) {
+        return {
+            success:false,
+            msg:'修改失败',
+            data:''
+        }
     }
+  
 }
 exports.deletBlog = async (blogId,nowAdmin)=>{
         if(!nowAdmin){
@@ -58,4 +90,65 @@ exports.deletBlog = async (blogId,nowAdmin)=>{
                 id:blogId
             }
         })
+}
+exports.selectByPage = async (page=1,limit=10)=>{
+    try {     
+    const result = await Blog.findAndCountAll({
+        attributes:['id','Bauthor','Btitle','Bdesc','Btags','Bview','Blike','updatedAt'],//筛选查询指定列
+        offset:(page-1)*limit,
+        limit:+limit,
+    })
+        return {
+            success:true,
+            totle:result.count,
+            data:JSON.parse(JSON.stringify(result.rows)),
+            msg:'查询成功'
+        };
+    } catch (error) {
+        return {
+            success:false,
+            totle:error,
+            data:'',
+            msg:'查询失败'
+        };
+    }
+
+
+}
+exports.selectBlogByType = async (data)=>{
+    try {
+        if(data.type == 'tag'){
+            const result = await Blog.findAndCountAll({
+                attributes:['id','Bauthor','Btitle','Bdesc','Btags','Bview','Blike','updatedAt'],//筛选查询指定列
+                offset:(data.page-1)*data.limit,
+                limit:+data.limit,
+                where:{
+                    Btags:data.tag
+                }
+            })
+                return {
+                    success:true,
+                    totle:result.count,
+                    data:JSON.parse(JSON.stringify(result.rows)),
+                    msg:'查询成功'
+                };
+           
+        }else if(data.type == 'id'){
+            const result =  await Blog.findByPk(data.id,{
+                attributes:['Bauthor','Bcontent','Bview','Blike']
+            })
+            return {
+                success:true,
+                data:result.dataValues,
+                msg:'查询成功'
+            };
+        }
+        
+    } catch (error) {
+        return {
+            success:false,
+            error:error,
+            msg:'查询失败'
+        }
+    }
 }
