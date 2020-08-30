@@ -1,7 +1,8 @@
 const express = require('express');
 const app = express();
 const path = require('path');
-const {blogRouter} = require('./Blog')
+const {blogRouter} = require('./Blog');
+const {TagRouter} = require('./tag')
 const staticpath = path.resolve(__dirname,'../public')
 app.use(express.static(staticpath))
 app.use(express.urlencoded({

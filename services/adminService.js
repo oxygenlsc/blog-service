@@ -121,3 +121,33 @@ exports.updateAdimn = async function (id, adminObj, nowAdmin) {
     }
    
 }
+exports.selectAdmin = async function(adminObj){
+    try {
+       const ins = await Adimn.findOne({
+            where:{
+                LoginId:adminObj.LoginId,
+                LoginPwd:md5(adminObj.LoginPwd)
+            }
+        })
+        console.log(ins);
+        
+        if(!ins){
+            return {
+                success:false,
+                msg:'没有数据',
+            }
+        }
+        return {
+            success:true,
+            data:ins.toJSON(),
+            msg:'查询成功'
+        }
+    } catch (error) {
+        return {
+            success:false,
+            error:error,
+            msg:'报错了'
+        }
+    }
+    
+}

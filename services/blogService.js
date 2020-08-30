@@ -21,12 +21,17 @@ exports.addBlog = async (blogObj)=>{
                 }
             })
             if(!findData){
-                tins = await Tags.addTags(blogObj.Btags).data
-                tid = tins.id;
+                tins = await Tags.addTags(blogObj.Btags)
+                console.log(tins.data ,';');
+                
+                tid =   tins.data.id;
             }else{
                 tins = findData.toJSON()
                 tid = findData.toJSON().id
+                console.log(tins ,':');
             }
+            console.log(findData,'??');
+            
             const mapdata = await BtMaping.addBtMap(Bid,tid)
         });
       

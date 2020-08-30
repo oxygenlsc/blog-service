@@ -42,3 +42,24 @@ exports.deletTags = async (tagid)=>{
         }
     }
 }
+exports.selectAllTags = async ()=>{
+    try {     
+        const result = await tags.findAndCountAll({
+            attributes:['id','Tag'],//筛选查询指定列
+        })
+            return {
+                success:true,
+                totle:result.count,
+                data:JSON.parse(JSON.stringify(result.rows)),
+                msg:'查询成功'
+            };
+        } catch (error) {
+            return {
+                success:false,
+                totle:error,
+                data:'',
+                msg:'查询失败'
+            };
+        }
+    
+}

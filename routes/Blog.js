@@ -2,7 +2,8 @@ const express = require('express');
 const router =  express.Router();
 const BlogS = require('../services/blogService')
 router.post('/addblog', async (req,res)=>{
-    const BlogData =  req.query.jsonData
+    const BlogData =  req.body.jsonData
+    console.log(BlogData,'lsc')
     const backdata = await BlogS.addBlog(JSON.parse(BlogData) );
     res.send(backdata);
 })
