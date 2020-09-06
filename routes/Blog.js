@@ -2,8 +2,7 @@ const express = require('express');
 const router =  express.Router();
 const BlogS = require('../services/blogService')
 router.post('/addblog', async (req,res)=>{
-    const BlogData =  req.body.jsonData
-    console.log(BlogData,'lsc')
+    const BlogData =  req.body.jsonData;
     const backdata = await BlogS.addBlog(JSON.parse(BlogData) );
     res.send(backdata);
 })
@@ -37,13 +36,22 @@ router.get('/selectBlogByType',async (req,resp)=>{
              resp.send('type错误')
          } 
 })
-//跟新一个博客
-router.post('/updateblog',async (req,res)=>{
-    const id = req.query.id;
-    const content = req.query.content
-    const data = await BlogS.updateBlog(id,{
+//跟新一个博客先获取到内容
+router.get('/getBlogDetail',async (req,resp)=>{
+    const Bid = req.query.id;
+    const data = await BlogS.selectBlogToUpdateById(Bid)
+    resp.send(data)
+})
+router.get('/updateBlog',async(req,resp)=>{
+    const Bid = req.query.id;
+    const content = req.query.content;
+    const data = await BlogS.updateBlog(Bid,{
         Bcontent:content
     })
-    res.send(data)
+    resp.send(data)
+})
+router.get('/getAllblog' ,async (req,res)=>{
+   const data = await BlogS.getAllBlog()
+   res.send(data)
 })
 exports.blogRouter = router;

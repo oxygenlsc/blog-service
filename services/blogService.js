@@ -181,3 +181,35 @@ exports.selectBlogByType = async (data)=>{
         }
     }
 }
+exports.getAllBlog =  async ()=>{
+    try {
+        const result = await  Blog.findAll({
+            attributes:['id','Btitle','Btags','updatedAt'],//筛选查询指定列
+        })
+        console.log(JSON.stringify(result));
+        
+        return {
+            success:true,
+            data:JSON.parse(JSON.stringify(result)),
+            msg:'查询成功'
+        };
+    } catch (error) {
+        return {
+            success:false,
+            totle:error,
+            data:'',
+            msg:'查询失败'
+        };
+    }
+}
+
+exports.selectBlogToUpdateById = async (id)=>{
+    const result =  await Blog.findByPk(id,{
+        attributes:['Bauthor','Bcontent','Btitle','Bdesc','Btags']
+    })
+    return {
+        success:true,
+        data:result.dataValues,
+        msg:'查询成功'
+    };
+}
