@@ -21,6 +21,27 @@ exports.getAllFriend =  async ()=>{
     }
 
 }
+exports.selectFriendLinkByPage = async (page)=>{
+        try {
+            const result = await FriendLink.findAndCountAll({
+                offset:(page-1)*10,
+                limit:10,
+            })
+            return {
+                success:true,
+                totle:result.count,
+                data:JSON.parse(JSON.stringify(result.rows)),
+                msg:'查询成功'
+            };
+        } catch (error) {
+            return {
+                success:false,
+                totle:error,
+                data:'',
+                msg:'查询失败'
+            };
+        }
+}
 exports.addFriendLink = async (LinkObj)=>{
     try {
         const ins = await FriendLink.create(LinkObj)
