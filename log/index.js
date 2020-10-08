@@ -6,7 +6,7 @@ log4js.configure({
             filename:'./logs/sql.log',
             maxLogSize:1024*1024,//配置文件的最大字节数 当类容超过这个之后就会备份一个出来再重新在这个文件里写
             keepFileExt:true,//让备份的文件以log为后缀
-            // daysToKeep:1,保存几天的
+            daysToKeep:1,//保存几天的
             layout:{
                 type:'pattern',
                 pattern:'%d{yyyy年MM月dd日 hh小时mm分ss秒} %p %c: %m%n'
