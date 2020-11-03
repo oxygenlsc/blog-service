@@ -54,4 +54,16 @@ router.get('/getAllblog' ,async (req,res)=>{
    const data = await BlogS.getAllBlog()
    res.send(data)
 })
+router.get('/BlikeBlog',async (req,res)=>{
+    const Bid = req.query.id;
+    const ip = getClientIp(req)
+    const data = await BlogS.BlikeBlogToUpdateById(Bid,ip)
+    res.send(data)
+})
+function getClientIp(req) {
+    return req.headers['x-forwarded-for'] ||
+    req.connection.remoteAddress ||
+    req.socket.remoteAddress ||
+    req.connection.socket.remoteAddress;
+};
 exports.blogRouter = router;

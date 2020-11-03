@@ -1,4 +1,5 @@
 const Blog = require('../models/blog');
+const Ip= require('../models/Ip');
 const Adimn = require('../models/admins');
 const Tags = require('./tagsService')
 const TagsModel = require('../models/tags')
@@ -212,4 +213,50 @@ exports.selectBlogToUpdateById = async (id)=>{
         data:result.dataValues,
         msg:'查询成功'
     };
+}
+//点赞功能先判断是不今天这个ip已经点过了 点过了就不能点了
+
+exports.BlikeBlogToUpdateById = async (id,ip)=>{
+    const result =  await Ip.findOne({
+        where:{
+            Bid:id,
+            Ip:ip,
+        }
+    })
+    if(!result){
+        const data =  await Ip.create({
+            Bid:id,
+            Ip:ip,
+            Iptype:2
+        })
+        const like =   await Blog.findByPk(id,{
+            attributes:['Blike']
+        })
+        let Oblike = like.dataValues.Blike;
+        if(!Oblike){
+            Oblike = 0;
+        }
+        Oblike = parseInt(Oblike)+1
+        const ins = await  Blog.update({
+            Blike:Oblike
+        }, {
+            where: {
+                id: id
+            }
+        })
+        return {
+            msg:'点赞成功',
+            data:ins,
+            success:true,
+        }
+    }else{
+        return{
+            success:false,
+            data:'',
+            msg:'已点过赞了'
+        }
+    }
+
+    console.log(result,'result',id,ip);
+    
 }
