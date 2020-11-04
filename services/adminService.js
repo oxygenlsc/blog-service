@@ -11,6 +11,8 @@ exports.addAdimn = async function (adminObj) {
             msg: '密码或账号传入字段名错误'
         }
     }
+   
+    
     if (typeof adminObj.LoginId != 'string' || typeof adminObj.loginPwd != 'string') {
         return {
             success: false,
@@ -23,6 +25,7 @@ exports.addAdimn = async function (adminObj) {
             LoginId: adminObj.LoginId
         }
     })
+    console.log(12344);
     if(adminer){
         return {
             success: false,
@@ -35,6 +38,7 @@ exports.addAdimn = async function (adminObj) {
         LoginId: adminObj.LoginId,
         loginPwd: md5(adminObj.loginPwd)
     }
+  
     try {
         const ins = await Adimn.create(insertData)
         sqlLog.info('创建管理员成功')

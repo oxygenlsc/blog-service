@@ -164,9 +164,31 @@ exports.selectBlogByType = async (data)=>{
                 };
            
         }else if(data.type == 'id'){
+            
             const result =  await Blog.findByPk(data.id,{
                 attributes:['Bauthor','Bcontent','Bview','Blike']
             })
+            if(!result.dataValues.Bview){
+                result.dataValues.Bview = 1;
+                await  Blog.update({
+                    Bview:1
+                }, {
+                    where: {
+                        id: data.id
+                    }
+                })
+            }else{
+                result.dataValues.Bview = result.dataValues.Bview+1
+                let tpBlike = JSON.parse(JSON.stringify(result.dataValues)) 
+                await  Blog.update({
+                    Bview:tpBlike.Bview
+                }, {
+                    where: {
+                        id: data.id
+                    }
+                })
+            }
+            
             return {
                 success:true,
                 data:result.dataValues,
