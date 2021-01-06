@@ -107,7 +107,7 @@ exports.deletBlog = async (blogId,nowAdmin)=>{
 exports.selectByPage = async (page=1,limit=10)=>{
     try {     
     const result = await Blog.findAndCountAll({
-        attributes:['id','Bauthor','Btitle','Bdesc','Btags','Bview','Blike','updatedAt'],//筛选查询指定列
+        attributes:['id','Bauthor','Btitle','Bdesc','Btags','Bview','Blike','createdAt'],//筛选查询指定列
         offset:(page-1)*limit,
         limit:+limit,
     })
@@ -149,7 +149,7 @@ exports.selectBlogByType = async (data)=>{
             }) 
             const bidarr = JSON.parse(JSON.stringify(bid)).map(el=>el.bid)
             const result = await Blog.findAndCountAll({
-                attributes:['id','Bauthor','Btitle','Bdesc','Btags','Bview','Blike','updatedAt'],//筛选查询指定列
+                attributes:['id','Bauthor','Btitle','Bdesc','Btags','Bview','Blike','createdAt'],//筛选查询指定列
                 offset:(data.page-1)*data.limit,
                 limit:+data.limit,
                 where:{
@@ -207,7 +207,7 @@ exports.selectBlogByType = async (data)=>{
 exports.getAllBlog =  async ()=>{
     try {
         const result = await  Blog.findAll({
-            attributes:['id','Btitle','Btags','updatedAt'],//筛选查询指定列
+            attributes:['id','Btitle','Btags','createdAt'],//筛选查询指定列
         })
         console.log(JSON.stringify(result));
         
