@@ -49,7 +49,7 @@ app.post('/uploadImg', upload.single('file'), function (req, res) {
     // req.file 是 `avatar` 文件的信息
     // req.body 将具有文本域数据，如果存在的话
   })
-app.listen(12306,()=>{
+app.listen(9999,()=>{
     console.log('启动成功');
 })
 function getIPAdress() {

@@ -9,7 +9,9 @@
 
 # production
 /dist
-/public/upload
+/public
+/logs
+/log
 # misc
 .DS_Store
 
