@@ -42,9 +42,10 @@ router.get('/getBlogDetail',async (req,resp)=>{
     const data = await BlogS.selectBlogToUpdateById(Bid)
     resp.send(data)
 })
-router.get('/updateBlog',async(req,resp)=>{
-    const Bid = req.query.id;
-    const content = req.query.content;
+router.post('/updateBlog',async(req,resp)=>{
+    const BlogData =  req.body;
+    const Bid = BlogData.id;
+    const content =BlogData.content;
     const data = await BlogS.updateBlog(Bid,{
         Bcontent:content
     })
